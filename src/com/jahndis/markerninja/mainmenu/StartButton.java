@@ -3,7 +3,7 @@ package com.jahndis.markerninja.mainmenu;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.jahndis.markerninja.GameScreen;
+import com.jahndis.markerninja.game.GameScreen;
 import com.jahndis.whalebot.framework.Game;
 import com.jahndis.whalebot.framework.Graphics;
 import com.jahndis.whalebot.gameobject.Button;

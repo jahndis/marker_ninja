@@ -1,4 +1,4 @@
-package com.jahndis.markerninja;
+package com.jahndis.markerninja.game;
 
 import java.util.List;
 
@@ -15,21 +15,18 @@ import android.graphics.Paint;
 public class GameScreen extends Screen {
   
   enum GameState {
-    Ready, Running, Paused, GameOver
+    Ready, Running, Paused, ShowItems, Caught, LevelFail, LevelSuccess
   }
-  
   GameState state = GameState.Ready;
   
-  // Variable Setup
-  // Create game objects here
-  
-  int livesLeft = 1;
   Paint paint;
+  Ninja ninja;
   
   public GameScreen(Game game) {
     super(game);
     
     // Initialize game objects here
+    ninja = new Ninja(game.getGraphics().getWidth()/2, game.getGraphics().getHeight()/2);
     
     // Defining a paint object
     paint = new Paint();
@@ -53,8 +50,13 @@ public class GameScreen extends Screen {
     case Paused:
       updatePaused(touchEvents);
       break;
-    case GameOver:
-      updateGameOver(touchEvents);
+    case ShowItems:
+      break;
+    case Caught:
+      break;
+    case LevelFail:
+      break;
+    case LevelSuccess:
       break;
     }
   }
@@ -71,29 +73,13 @@ public class GameScreen extends Screen {
     for (int i = 0; i < len; i++ ) {
       TouchEvent event = touchEvents.get(i);
       
-      if (event.type == TouchEventType.TOUCH_DOWN) {
-        if (event.x < 640) {
-          // Move left
-        } else if (event.x > 640) {
-          // Move right
-        }
-      }
-      
-      if (event.type == TouchEventType.TOUCH_UP) {
-        if (event.x < 640) {
-          // Stop moving left
-        } else if (event.x > 640) {
-          // Stop moving right
-        }
-      }
+      ninja.respondToTouchEvent(event);
     }
     
     // 2. Check miscellaneous events like death
-    if (livesLeft == 0) {
-      state = GameState.GameOver;
-    }
     
     // 3. Call individual update method here
+    ninja.update(deltaTime);
   }
   
   private void updatePaused(List<TouchEvent> touchEvents) {
@@ -106,20 +92,6 @@ public class GameScreen extends Screen {
     }
   }
   
-  private void updateGameOver(List<TouchEvent> touchEvents) {
-    int len = touchEvents.size();
-    for(int i = 0; i < len; i++) {
-      TouchEvent event = touchEvents.get(i);
-      if (event.type == TouchEventType.TOUCH_UP) {
-        if (event.x > 300 && event.x < 980 && event.y > 100 && event.y < 500) {
-          nullify();
-          game.setScreen(new MainMenuScreen(game));
-          return;
-        }
-      }
-    }
-  }
-  
   private void nullify() {
     paint = null;
     System.gc();
@@ -127,48 +99,36 @@ public class GameScreen extends Screen {
   
   @Override
   public void paint(float deltaTime) {
-//    Graphics g = game.getGraphics();
-    
-    // 1. Draw game elements
-    
-    // 2. Draw UI elements above the game
+    Graphics g = game.getGraphics();
+    g.clearScreen(Color.BLACK);
+
     switch (state) {
     case Ready:
-      drawReadyUI();
+      drawReadyUI(g);
       break;
     case Running:
-      drawRunningUI();
+      drawRunningUI(g);
+      break;
+    case Caught:
+      break;
+    case LevelFail:
+      break;
+    case LevelSuccess:
       break;
     case Paused:
-      drawPausedUI();
       break;
-    case GameOver:
-      drawGameOverUI();
+    case ShowItems:
       break;
     }
   }
   
-  private void drawReadyUI() {
-    Graphics g = game.getGraphics();
-    
+  private void drawReadyUI(Graphics g) {
     g.drawARGB(155, 0, 0, 0);
-    g.drawString("Tap each side of the screen to move in that direction.", 640, 300, paint);
+    g.drawString("Tap to begin.", g.getWidth() / 2, 300, paint);
   }
   
-  private void drawRunningUI() {
-//    Graphics g = game.getGraphics();
-  }
-  
-  private void drawPausedUI() {
-    Graphics g = game.getGraphics();
-    // Darken the entire screen so you can display the Paused screen.
-    g.drawARGB(155, 0, 0, 0);
-  }
-  
-  private void drawGameOverUI() {
-    Graphics g = game.getGraphics();
-    g.drawRect(0, 0, 1281, 801, Color.BLACK);
-    g.drawString("GAME OVER", 640, 300, paint);
+  private void drawRunningUI(Graphics g) {
+    ninja.paint(g);
   }
   
   @Override
@@ -190,7 +150,8 @@ public class GameScreen extends Screen {
   
   @Override
   public void backButton() {
-    pause();
+//    pause();
+    game.exit();
   }
 
 }
