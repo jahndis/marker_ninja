@@ -13,7 +13,7 @@ import com.jahndis.whalebot.gameobject.framework.Updateable;
 public class Ninja implements Paintable, Updateable, Touchable {
   
   private final static int JUMP_VELOCITY_THRESHOLD = 30;
-  private final static int JUMP_SPEED = 15;
+  private final static int JUMP_SPEED = 10;
   
   enum NinjaState {
     STANDING, JUMPING, CLINGING, MARKING, THROWING, INTERACTING, HIDING, CAUGHT, WINNING
@@ -56,8 +56,6 @@ public class Ninja implements Paintable, Updateable, Touchable {
     case INTERACTING:
       break;
     case JUMPING:
-      x += Math.cos(direction) * speed;
-      y -= Math.sin(direction) * speed;
       break;
     case MARKING:
       break;
@@ -68,6 +66,9 @@ public class Ninja implements Paintable, Updateable, Touchable {
     case WINNING:
       break;
     }
+    
+    x += Math.cos(direction) * speed * deltaTime;
+    y -= Math.sin(direction) * speed * deltaTime;
   }
 
   @Override

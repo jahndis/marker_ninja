@@ -39,7 +39,7 @@ public class LoadingScreen extends Screen {
   
   @Override
   public void backButton() {
-    game.exit();
+    
   }
 
 }

@@ -2,6 +2,8 @@ package com.jahndis.markerninja.mainmenu;
 
 import java.util.List;
 
+import android.graphics.Color;
+
 import com.jahndis.whalebot.framework.Game;
 import com.jahndis.whalebot.framework.Graphics;
 import com.jahndis.whalebot.framework.Input.TouchEvent;
@@ -35,6 +37,9 @@ public class MainMenuScreen extends Screen {
   @Override
   public void paint(float deltaTime) {
     Graphics g = game.getGraphics();
+    
+    g.clearScreen(Color.BLACK);
+    
     startButton.paint(g);
     quitButton.paint(g);
   }
