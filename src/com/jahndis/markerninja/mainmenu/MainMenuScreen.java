@@ -8,17 +8,18 @@ import com.jahndis.whalebot.framework.Game;
 import com.jahndis.whalebot.framework.Graphics;
 import com.jahndis.whalebot.framework.Input.TouchEvent;
 import com.jahndis.whalebot.framework.Screen;
+import com.jahndis.whalebot.gameobject.Button;
 
 public class MainMenuScreen extends Screen {
   
-  private StartButton startButton;
-  private QuitButton quitButton;
+  private Button startButton;
+  private Button quitButton;
   
   public MainMenuScreen(Game game) {
     super(game);
     
-    startButton = new StartButton(game);
-    quitButton = new QuitButton(game);
+    startButton = new StartButton(game, "Start");
+    quitButton = new QuitButton(game, "Quit");
   }
   
   @Override
@@ -61,7 +62,7 @@ public class MainMenuScreen extends Screen {
   
   @Override
   public void backButton() {
-    //Display "Exit Game?" Box
+    game.exit();
   }
 
 }

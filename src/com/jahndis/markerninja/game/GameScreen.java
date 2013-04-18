@@ -29,7 +29,7 @@ public class GameScreen extends Screen {
     super(game);
     
     // Initialize game objects here
-    ninja = new Ninja(game.getGraphics().getWidth()/2, game.getGraphics().getHeight()/2);
+    ninja = new Ninja(game.getGraphics().getWidth() / 2, game.getGraphics().getHeight() / 2);
     walls = new ArrayList<Wall>();
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 12; j++) {

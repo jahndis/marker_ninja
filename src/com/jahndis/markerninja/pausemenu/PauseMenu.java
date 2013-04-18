@@ -16,9 +16,9 @@ public class PauseMenu implements Paintable {
   
   public PauseMenu(Game game) {
     this.game = game;
-    resumeButton = new ResumeButton(game);
-    restartButton = new RestartButton(game);
-    exitButton = new ExitButton(game);
+    resumeButton = new ResumeButton(game, "Resume");
+    restartButton = new RestartButton(game, "Restart");
+    exitButton = new ExitButton(game, "Exit");
   }
 
   @Override
