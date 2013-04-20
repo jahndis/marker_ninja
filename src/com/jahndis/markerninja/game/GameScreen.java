@@ -79,18 +79,21 @@ public class GameScreen extends Screen {
   }
   
   private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
-    // 1. Handle touch input
+    // Handle touch input
     int len = touchEvents.size();
     for (int i = 0; i < len; i++ ) {
-      TouchEvent event = touchEvents.get(i);
-      
-      ninja.respondToTouchEvent(event);
+      ninja.respondToTouchEvent(touchEvents.get(i));
     }
     
-    // 2. Check miscellaneous events like death
-    
-    // 3. Call individual update method here
+    // Update objects
     ninja.update(deltaTime);
+    
+    // Detect collisions and resolve
+    for (Wall w : walls) {
+      if (ninja.hasCollision(w)) {
+        ninja.respondToCollision(w);
+      }
+    }
   }
   
   private void updatePaused(List<TouchEvent> touchEvents) {

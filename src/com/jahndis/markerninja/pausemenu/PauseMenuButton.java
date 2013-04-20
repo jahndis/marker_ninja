@@ -19,7 +19,7 @@ public class PauseMenuButton extends Button {
     width = 300;
     height = 100;
     
-    Paint stringPaint = new Paint();
+    stringPaint = new Paint();
     stringPaint.setTextAlign(Paint.Align.CENTER);
     stringPaint.setTextSize(32);
     stringPaint.setColor(Color.WHITE);
