@@ -7,9 +7,7 @@ import com.jahndis.whalebot.framework.Input.TouchEvent;
 public class StartButton extends MainMenuButton {
   
   public StartButton(Game game, String label) {
-    super(game, label);
-    x = game.getGraphics().getWidth() / 2 - 150;
-    y = 500;
+    super(game, label, game.getGraphics().getWidth() / 2 - 150, 500);
   }
   
   @Override

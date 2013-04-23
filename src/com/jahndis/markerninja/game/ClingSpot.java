@@ -12,18 +12,18 @@ import com.jahndis.whalebot.gameobject.framework.Collidable;
 import com.jahndis.whalebot.gameobject.framework.Paintable;
 import com.jahndis.whalebot.utils.CollisionHandler;
 
-public class Wall extends GameObject implements Paintable, Collidable {
-
+public class ClingSpot extends GameObject implements Paintable, Collidable {
+  
   private Rect collisionMask;
   
-  public Wall(Game game, int x, int y) {
+  public ClingSpot(Game game, int x, int y) {
     super(game, x, y, 50, 50);
     this.collisionMask = new Rect(x, y, x + width, y + height);
   }
 
   @Override
   public void paint(Graphics g) {
-    g.drawRect(x + 1, y + 1, width - 2, height - 2, Color.RED);
+    g.drawRect(x + 1, y + 1, width - 2, height - 2, Color.BLUE);
   }
   
   @Override
@@ -45,7 +45,7 @@ public class Wall extends GameObject implements Paintable, Collidable {
   public void respondToCollision(Collidable other) {
     
   }
-  
+
   @Override
   public void respondToNoCollision(Collidable otherClass) {
     

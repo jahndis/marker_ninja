@@ -13,11 +13,9 @@ public class PauseMenuButton extends Button {
   private String label;
   private Paint stringPaint;
   
-  public PauseMenuButton(Game game, String label) {
-    super(game);
+  public PauseMenuButton(Game game, String label, int x, int y) {
+    super(game, x, y, 300, 100);
     this.label = label;
-    width = 300;
-    height = 100;
     
     stringPaint = new Paint();
     stringPaint.setTextAlign(Paint.Align.CENTER);

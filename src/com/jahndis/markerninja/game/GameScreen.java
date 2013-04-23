@@ -11,7 +11,6 @@ import com.jahndis.whalebot.framework.Screen;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
 public class GameScreen extends Screen {
   
@@ -23,21 +22,30 @@ public class GameScreen extends Screen {
   Paint paint;
   Ninja ninja;
   ArrayList<Wall> walls;
+  ArrayList<HidingSpot> hidingSpots;
+  ArrayList<ClingSpot> clingSpots;
   PauseMenu pauseMenu;
   
   public GameScreen(Game game) {
     super(game);
     
     // Initialize game objects here
-    ninja = new Ninja(game.getGraphics().getWidth() / 2, game.getGraphics().getHeight() / 2);
+    ninja = new Ninja(game, game.getGraphics().getWidth() / 2, game.getGraphics().getHeight() / 2);
     walls = new ArrayList<Wall>();
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 12; j++) {
-        if (i == 0 || j == 0 || i == 7 || j == 11) {
-          walls.add(new Wall(i * 100, j * 100));
+    for (int i = 0; i < 8 * 2; i++) {
+      for (int j = 0; j < 12 * 2; j++) {
+        if (i == 0 || j == 0 || i == 8 * 2 - 1 || j == 12 * 2 - 1) {
+          walls.add(new Wall(game, i * 50, j * 50));
         }
       }
     }
+    hidingSpots = new ArrayList<HidingSpot>();
+    hidingSpots.add(new HidingSpot(game, 7 * 50, (12 * 2 - 2) * 50));
+    hidingSpots.add(new HidingSpot(game, (8 * 2 - 2) * 50, 9 * 50));
+    
+    clingSpots = new ArrayList<ClingSpot>();
+    clingSpots.add(new ClingSpot(game, 7 * 50, 1 * 50));
+    clingSpots.add(new ClingSpot(game, 1 * 50, 9 * 50));
     
     // Defining a paint object
     paint = new Paint();
@@ -89,11 +97,9 @@ public class GameScreen extends Screen {
     ninja.update(deltaTime);
     
     // Detect collisions and resolve
-    for (Wall w : walls) {
-      if (ninja.hasCollision(w)) {
-        ninja.respondToCollision(w);
-      }
-    }
+    ninja.checkForCollisions(walls);
+    ninja.checkForCollisions(hidingSpots);
+    ninja.checkForCollisions(clingSpots);
   }
   
   private void updatePaused(List<TouchEvent> touchEvents) {
@@ -143,6 +149,14 @@ public class GameScreen extends Screen {
     
     for (Wall wall : walls) {
       wall.paint(g);
+    }
+    
+    for (HidingSpot h : hidingSpots) {
+      h.paint(g);
+    }
+    
+    for (ClingSpot c : clingSpots) {
+      c.paint(g);
     }
   }
   

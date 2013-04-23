@@ -6,9 +6,7 @@ import com.jahndis.whalebot.framework.Input.TouchEvent;
 public class QuitButton extends MainMenuButton {
   
   public QuitButton(Game game, String label) {
-    super(game, label);
-    x = game.getGraphics().getWidth() / 2 - 150;
-    y = 700;
+    super(game, label, game.getGraphics().getWidth() / 2 - 150, 700);
   }
   
   @Override
