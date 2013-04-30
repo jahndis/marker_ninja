@@ -11,6 +11,7 @@ import com.jahndis.whalebot.framework.Screen;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 public class GameScreen extends Screen {
   
@@ -19,18 +20,29 @@ public class GameScreen extends Screen {
   }
   GameState state = GameState.Ready;
   
-  Paint paint;
+  // Game objects
   Ninja ninja;
   ArrayList<Wall> walls;
   ArrayList<HidingSpot> hidingSpots;
   ArrayList<ClingSpot> clingSpots;
+  ArrayList<SlideSpot> slideSpots;
+  
+  // Collision managers
+  NinjaWallCollisionManager ninjaWallCollision;
+  NinjaHidingSpotCollisionManager ninjaHidingSpotCollision;
+  NinjaClingSpotCollisionManager ninjaClingSpotCollision;
+  NinjaSlideSpotCollisionManager ninjaSlideSpotCollision;
+  
+  // Other stuff
+  Paint paint;
   PauseMenu pauseMenu;
   
   public GameScreen(Game game) {
     super(game);
     
     // Initialize game objects here
-    ninja = new Ninja(game, game.getGraphics().getWidth() / 2, game.getGraphics().getHeight() / 2);
+    ninja = new Ninja(game, 8 * 50, 12 * 50);
+    
     walls = new ArrayList<Wall>();
     for (int i = 0; i < 8 * 2; i++) {
       for (int j = 0; j < 12 * 2; j++) {
@@ -39,13 +51,41 @@ public class GameScreen extends Screen {
         }
       }
     }
+//    walls.add(new Wall(game, 10 * 50, (12 * 2 - 4) * 50 - 30));
+//    walls.add(new Wall(game, 10 * 50, (12 * 2 - 3) * 50 - 30));
+//    walls.add(new Wall(game, 10 * 50, (12 * 2 - 2) * 50 - 30));
+//    walls.add(new Wall(game, 9 * 50, (12 * 2 - 4) * 50 - 30));
+//    walls.add(new Wall(game, 9 * 50, (12 * 2 - 3) * 50 - 30));
+//    walls.add(new Wall(game, 9 * 50, (12 * 2 - 2) * 50 - 30));
+    
+    walls.add(new Wall(game, 1 * 50, 10 * 50));
+    walls.add(new Wall(game, 2 * 50, 10 * 50));
+    walls.add(new Wall(game, 3 * 50, 10 * 50));
+    walls.add(new Wall(game, 4 * 50, 10 * 50));
+    walls.add(new Wall(game, 5 * 50, 10 * 50));
+    walls.add(new Wall(game, 6 * 50, 10 * 50));
+    walls.add(new Wall(game, 7 * 50, 10 * 50));
+    walls.add(new Wall(game, 8 * 50, 10 * 50));
+    
+    walls.add(new Wall(game, 7 * 50, 22 * 50));
+    
     hidingSpots = new ArrayList<HidingSpot>();
-    hidingSpots.add(new HidingSpot(game, 7 * 50, (12 * 2 - 2) * 50));
-    hidingSpots.add(new HidingSpot(game, (8 * 2 - 2) * 50, 9 * 50));
+//    hidingSpots.add(new HidingSpot(game, 3 * 50, (12 * 2 - 2) * 50));
+//    hidingSpots.add(new HidingSpot(game, (8 * 2 - 2) * 50, 9 * 50));
     
     clingSpots = new ArrayList<ClingSpot>();
-    clingSpots.add(new ClingSpot(game, 7 * 50, 1 * 50));
-    clingSpots.add(new ClingSpot(game, 1 * 50, 9 * 50));
+//    clingSpots.add(new ClingSpot(game, 7 * 50, 1 * 50));
+//    clingSpots.add(new ClingSpot(game, 1 * 50, 9 * 50));
+    
+    slideSpots = new ArrayList<SlideSpot>();
+//    slideSpots.add(new SlideSpot(game, SlideDirection.RIGHT, 8 * 50, (12 * 2 - 2) * 50));
+//    slideSpots.add(new SlideSpot(game, SlideDirection.LEFT, 11 * 50, (12 * 2 - 2) * 50));
+    
+    // Define the collision managers
+    ninjaWallCollision = new NinjaWallCollisionManager(ninja, walls);
+    ninjaHidingSpotCollision = new NinjaHidingSpotCollisionManager(ninja, hidingSpots);
+    ninjaClingSpotCollision = new NinjaClingSpotCollisionManager(ninja, clingSpots);
+    ninjaSlideSpotCollision = new NinjaSlideSpotCollisionManager(ninja, slideSpots);
     
     // Defining a paint object
     paint = new Paint();
@@ -97,9 +137,10 @@ public class GameScreen extends Screen {
     ninja.update(deltaTime);
     
     // Detect collisions and resolve
-    ninja.checkForCollisions(walls);
-    ninja.checkForCollisions(hidingSpots);
-    ninja.checkForCollisions(clingSpots);
+    ninjaWallCollision.check();
+    ninjaHidingSpotCollision.check();
+    ninjaClingSpotCollision.check();
+    ninjaSlideSpotCollision.check();
   }
   
   private void updatePaused(List<TouchEvent> touchEvents) {
@@ -145,18 +186,22 @@ public class GameScreen extends Screen {
   }
   
   private void drawRunningUI(Graphics g) {
-    ninja.paint(g);
-    
-    for (Wall wall : walls) {
-      wall.paint(g);
-    }
-    
-    for (HidingSpot h : hidingSpots) {
-      h.paint(g);
+    for (Wall w : walls) {
+      w.paint(g);
     }
     
     for (ClingSpot c : clingSpots) {
       c.paint(g);
+    }
+    
+    for (SlideSpot s : slideSpots) {
+      s.paint(g);
+    }
+    
+    ninja.paint(g);
+    
+    for (HidingSpot h : hidingSpots) {
+      h.paint(g);
     }
   }
   

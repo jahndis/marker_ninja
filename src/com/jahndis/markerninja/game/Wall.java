@@ -1,7 +1,5 @@
 package com.jahndis.markerninja.game;
 
-import java.util.Collection;
-
 import android.graphics.Color;
 import android.graphics.Rect;
 
@@ -10,7 +8,6 @@ import com.jahndis.whalebot.framework.Graphics;
 import com.jahndis.whalebot.gameobject.GameObject;
 import com.jahndis.whalebot.gameobject.framework.Collidable;
 import com.jahndis.whalebot.gameobject.framework.Paintable;
-import com.jahndis.whalebot.utils.CollisionHandler;
 
 public class Wall extends GameObject implements Paintable, Collidable {
 
@@ -25,30 +22,10 @@ public class Wall extends GameObject implements Paintable, Collidable {
   public void paint(Graphics g) {
     g.drawRect(x + 1, y + 1, width - 2, height - 2, Color.RED);
   }
-  
-  @Override
-  public void checkForCollisions(Collection<? extends Collidable> others) {
-    
-  }
-
-  @Override
-  public boolean hasCollision(Collidable other) {
-    return CollisionHandler.hasCollision(this, other);
-  }
 
   @Override
   public Rect getCollisionMask() {
     return collisionMask;
-  }
-
-  @Override
-  public void respondToCollision(Collidable other) {
-    
-  }
-  
-  @Override
-  public void respondToNoCollision(Collidable otherClass) {
-    
   }
 
 }
