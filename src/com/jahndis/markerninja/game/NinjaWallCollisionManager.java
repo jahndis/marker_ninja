@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.jahndis.markerninja.game.Ninja.NinjaState;
 import com.jahndis.whalebot.collisions.CollisionManager;
@@ -73,23 +72,16 @@ public class NinjaWallCollisionManager extends CollisionManager<Ninja, Wall> {
     object.state.remove(NinjaState.AGAINST_LEFT);
     
     object.state.remove(NinjaState.JUMPING);
-  
-//    if (onGround(other)) {
-//      state.remove(NinjaState.JUMPING);
-//      state.remove(NinjaState.FALLING);
-//      state.add(NinjaState.STANDING);
-//      speed = 0;
-//    } else {
-//      state.remove(NinjaState.JUMPING);
-//      state.add(NinjaState.FALLING);
-//    }
   }
   
   public void onCollisionDown(Ninja object, Wall other) {
     object.state.add(NinjaState.AGAINST_BOTTOM);
     
     object.state.remove(NinjaState.FALLING);
-    object.state.add(NinjaState.STANDING);
+    object.state.remove(NinjaState.WALL_SLIDING);
+    if (!object.state.contains(NinjaState.SLIDING)) {
+      object.state.add(NinjaState.STANDING);
+    }
   }
   
   public void onCollisionUp(Ninja object, Wall other) {
@@ -110,6 +102,10 @@ public class NinjaWallCollisionManager extends CollisionManager<Ninja, Wall> {
     object.state.remove(NinjaState.AGAINST_TOP);
     object.state.remove(NinjaState.AGAINST_RIGHT);
     object.state.remove(NinjaState.AGAINST_LEFT);
+    
+    object.state.remove(NinjaState.STANDING);
+    object.state.remove(NinjaState.WALL_SLIDING);
+    object.state.remove(NinjaState.SLIDING);
   }
   
   
@@ -142,7 +138,6 @@ public class NinjaWallCollisionManager extends CollisionManager<Ninja, Wall> {
   }
   
   private boolean objectAgainstLeftSideOfWall(Wall other) {
-//    Log.i("Ninja collision", getObject().getCollisionMask() + " " + other.getCollisionMask());
     if (((getObject().getCollisionMask().top < other.getCollisionMask().bottom && getObject().getCollisionMask().top > other.getCollisionMask().top) || 
         (getObject().getCollisionMask().top + (getObject().height * 0.5) < other.getCollisionMask().bottom && getObject().getCollisionMask().top + (getObject().height * 0.5) > other.getCollisionMask().top) ||
         (getObject().getCollisionMask().bottom < other.getCollisionMask().bottom && getObject().getCollisionMask().bottom > other.getCollisionMask().top)) &&

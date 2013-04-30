@@ -5,10 +5,7 @@ import java.util.HashSet;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 
-import com.jahndis.markerninja.game.SlideSpot.SlideDirection;
-import com.jahndis.whalebot.collisions.CollisionManager;
 import com.jahndis.whalebot.framework.Game;
 import com.jahndis.whalebot.framework.Graphics;
 import com.jahndis.whalebot.framework.Input.TouchEvent;
@@ -24,13 +21,14 @@ public class Ninja extends GameObject implements Paintable, Updateable, Touchabl
   private final static int JUMP_SPEED = 20;
   private final static int SLIDE_SPEED = 10;
   private final static int FALL_SPEED = 10;
+  private final static int WALL_SLIDE_SPEED = 6;
   private final static int THROW_TOUCH_TIME = 20;
   private final static int MAX_THROW_SPEED = 80;
   private final static int MIN_THROW_SPEED = 10;
   
   enum NinjaState {
     AGAINST_TOP, AGAINST_BOTTOM, AGAINST_LEFT, AGAINST_RIGHT, 
-    STANDING, JUMPING, CLINGING, FALLING, HIDING,
+    STANDING, JUMPING, CLINGING, FALLING, WALL_SLIDING, HIDING,
     CAN_SLIDE_LEFT, CAN_SLIDE_RIGHT, SLIDING, 
     MARKING, THROWING, INTERACTING, 
     CAUGHT, WINNING
@@ -73,8 +71,20 @@ public class Ninja extends GameObject implements Paintable, Updateable, Touchabl
   
   @Override
   public void update(float deltaTime) { 
-    if (!state.contains(NinjaState.AGAINST_BOTTOM) && !state.contains(NinjaState.JUMPING)) {
-      state.add(NinjaState.FALLING);
+    if (!state.contains(NinjaState.AGAINST_BOTTOM) && 
+        !state.contains(NinjaState.JUMPING) &&
+        !state.contains(NinjaState.CLINGING) && 
+        !state.contains(NinjaState.HIDING)) {
+      if (state.contains(NinjaState.AGAINST_LEFT) || state.contains(NinjaState.AGAINST_RIGHT)) {
+        state.add(NinjaState.WALL_SLIDING);
+      } else {
+        state.add(NinjaState.FALLING);
+      }
+    }
+    
+    if (state.contains(NinjaState.WALL_SLIDING)) {
+      speed = WALL_SLIDE_SPEED;
+      direction = (float) (Math.PI * 1.5);
     }
     
     if (state.contains(NinjaState.FALLING)) {
@@ -163,12 +173,15 @@ public class Ninja extends GameObject implements Paintable, Updateable, Touchabl
   }
   
   private void jump(float direction) {
-//    state.remove(NinjaState.STANDING);
-//    state.remove(NinjaState.AGAINST_LEFT);
-//    state.remove(NinjaState.AGAINST_RIGHT);
-//    state.remove(NinjaState.CAN_SLIDE_LEFT);
-//    state.remove(NinjaState.CAN_SLIDE_RIGHT);
-//    state.remove(NinjaState.FALLING);
+    state.remove(NinjaState.STANDING);
+    state.remove(NinjaState.AGAINST_TOP);
+    state.remove(NinjaState.AGAINST_BOTTOM);
+    state.remove(NinjaState.AGAINST_LEFT);
+    state.remove(NinjaState.AGAINST_RIGHT);
+    state.remove(NinjaState.CAN_SLIDE_LEFT);
+    state.remove(NinjaState.CAN_SLIDE_RIGHT);
+    state.remove(NinjaState.FALLING);
+    state.remove(NinjaState.WALL_SLIDING);
     state.add(NinjaState.JUMPING);
     speed = Ninja.JUMP_SPEED;
     this.direction = direction;
@@ -198,94 +211,18 @@ public class Ninja extends GameObject implements Paintable, Updateable, Touchabl
     return collisionMask;
   }
   
-  public void respondToCollisionWithWall(Wall other) {
-//    PointF moveOutVector = CollisionManager.getCollisionResolutionVector(this, other, (float) (direction + Math.PI));
-//    move(moveOutVector.x, moveOutVector.y);
-
-//    if (onGround(other)) {
-//      state.remove(NinjaState.JUMPING);
-//      state.remove(NinjaState.FALLING);
-//      state.add(NinjaState.STANDING);
-//      speed = 0;
-//    } else {
-//      state.remove(NinjaState.JUMPING);
-//      state.add(NinjaState.FALLING);
-//    }
-//    
-//    if (!againstCeiling(other)) {
-//      if (againstLeft(other)) {
-//        state.add(NinjaState.AGAINST_LEFT);
-//      } else if (againstRight(other)) {
-//        state.add(NinjaState.AGAINST_RIGHT);
-//      }
-//    } else {
-//      state.remove(NinjaState.AGAINST_LEFT);
-//      state.remove(NinjaState.AGAINST_RIGHT);
-//    }
-  }
-  
-  public void respondToCollisionWithHidingSpot(HidingSpot other) {
-//    if (!state.contains(NinjaState.HIDING) || 
-//        state.contains(NinjaState.STANDING) || 
-//        state.contains(NinjaState.CLINGING) || 
-//        state.contains(NinjaState.FALLING)
-//        ) { 
-//      setPosition(other.getPosition());
-//      speed = 0;
-//      state.remove(NinjaState.JUMPING);
-//      state.remove(NinjaState.FALLING);
-//      state.remove(NinjaState.SLIDING);
-//      state.add(NinjaState.HIDING);
-//    }
-  }
-  
-  public void respondToCollisionWithClingSpot(ClingSpot other) {
-//    if (!state.contains(NinjaState.CLINGING) || state.contains(NinjaState.FALLING)) { 
-//      setPosition(other.getPosition());
-//      speed = 0;
-//      state.remove(NinjaState.JUMPING);
-//      state.remove(NinjaState.FALLING);
-//      state.remove(NinjaState.SLIDING);
-//      state.add(NinjaState.CLINGING);
-//    }
-  }
-  
-  public void respondToCollisionWithSlideSpot(SlideSpot other) {
-//    if (state.contains(NinjaState.STANDING)) {
-//      if (other.direction == SlideDirection.LEFT) { 
-//        state.add(NinjaState.CAN_SLIDE_LEFT);
-//      } else if (other.direction == SlideDirection.RIGHT) { 
-//        state.add(NinjaState.CAN_SLIDE_RIGHT);
-//      }  
-//    } else if (state.contains(NinjaState.SLIDING)){
-//      if ((Float.compare(direction, (float) Math.PI) == 0 && other.direction == SlideDirection.RIGHT && x <= other.x) ||
-//          (Float.compare(direction, 0) == 0 && other.direction == SlideDirection.LEFT && x >= other.x)) {
-//        x = other.x;
-//        state.remove(NinjaState.SLIDING);
-//        state.add(NinjaState.STANDING);
-//        speed = 0;
-//      }
-//    }
-  }
-
-  public void respondToNoCollisionWithHidingSpot() {
-//    state.remove(NinjaState.HIDING);
-  }
-
-  public void respondToNoCollisionWithClingingSpot() {
-//    state.remove(NinjaState.CLINGING);
-  }
-  
   
   /* Private Methods */
   
   private boolean canJump(float direction) {
-    Log.i("Ninja", state.toString());
     if (state.isEmpty()) {
       return true;
     }
     
-    if (state.contains(NinjaState.STANDING) || state.contains(NinjaState.CLINGING) || state.contains(NinjaState.HIDING)) {
+    if (state.contains(NinjaState.STANDING) || 
+        state.contains(NinjaState.CLINGING) || 
+        state.contains(NinjaState.HIDING) ||
+        state.contains(NinjaState.WALL_SLIDING)) {
       if (state.contains(NinjaState.AGAINST_BOTTOM)) {
         if (Math.sin(direction) < 0) {
           return false;
@@ -321,7 +258,7 @@ public class Ninja extends GameObject implements Paintable, Updateable, Touchabl
     float touchDistance = findTouchDistance(touchStart, touchEnd);
     
     if (touchTime <= 1 || touchDistance < 5) {
-      // Return 0 velocity for a tap
+      // Return 0 velocity for a tap or hold
       return 0;
     } else {
       return touchDistance / touchTime;
@@ -331,45 +268,5 @@ public class Ninja extends GameObject implements Paintable, Updateable, Touchabl
   private static float findTouchDirection(PointF touchStart, PointF touchEnd) {
     return (float) (Math.atan2((touchEnd.y - touchStart.y), -(touchEnd.x - touchStart.x)) + Math.PI);
   }
-  
-//  private boolean onGround(Wall wall) {
-//    if (((getCollisionMask().left <= wall.getCollisionMask().right && getCollisionMask().left >= wall.getCollisionMask().left) || 
-//        (getCollisionMask().right <= wall.getCollisionMask().right && getCollisionMask().right >= wall.getCollisionMask().left)) &&
-//        Float.compare(getCollisionMask().bottom, wall.getCollisionMask().top) == 0) {
-//      return true;
-//    } else {
-//      return false;
-//    }
-//  }
-  
-//  private boolean againstCeiling(Wall wall) {
-//    if (((getCollisionMask().left <= wall.getCollisionMask().right && getCollisionMask().left >= wall.getCollisionMask().left) || 
-//        (getCollisionMask().right <= wall.getCollisionMask().right && getCollisionMask().right >= wall.getCollisionMask().left)) &&
-//        Float.compare(getCollisionMask().top, wall.getCollisionMask().bottom) == 0) {
-//      return true;
-//    } else {
-//      return false;
-//    }
-//  }
-  
-//  private boolean againstLeft(Wall wall) {
-//    if (((getCollisionMask().top <= wall.getCollisionMask().bottom && getCollisionMask().top >= wall.getCollisionMask().top) || 
-//        (getCollisionMask().bottom <= wall.getCollisionMask().bottom && getCollisionMask().bottom >= wall.getCollisionMask().top)) &&
-//        Float.compare(getCollisionMask().left, wall.getCollisionMask().right) == 0) {
-//      return true;
-//    } else {
-//      return false;
-//    }
-//  }
-  
-//  private boolean againstRight(Wall wall) {
-//    if (((getCollisionMask().top <= wall.getCollisionMask().bottom && getCollisionMask().top >= wall.getCollisionMask().top) || 
-//        (getCollisionMask().bottom <= wall.getCollisionMask().bottom && getCollisionMask().bottom >= wall.getCollisionMask().top)) &&
-//        Float.compare(getCollisionMask().right, wall.getCollisionMask().left) == 0) {
-//      return true;
-//    } else {
-//      return false;
-//    }
-//  }
 
 }

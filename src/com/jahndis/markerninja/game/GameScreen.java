@@ -11,7 +11,6 @@ import com.jahndis.whalebot.framework.Screen;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
 public class GameScreen extends Screen {
   
@@ -51,12 +50,12 @@ public class GameScreen extends Screen {
         }
       }
     }
-//    walls.add(new Wall(game, 10 * 50, (12 * 2 - 4) * 50 - 30));
-//    walls.add(new Wall(game, 10 * 50, (12 * 2 - 3) * 50 - 30));
-//    walls.add(new Wall(game, 10 * 50, (12 * 2 - 2) * 50 - 30));
-//    walls.add(new Wall(game, 9 * 50, (12 * 2 - 4) * 50 - 30));
-//    walls.add(new Wall(game, 9 * 50, (12 * 2 - 3) * 50 - 30));
-//    walls.add(new Wall(game, 9 * 50, (12 * 2 - 2) * 50 - 30));
+    walls.add(new Wall(game, 10 * 50, (12 * 2 - 4) * 50 - 30));
+    walls.add(new Wall(game, 10 * 50, (12 * 2 - 3) * 50 - 30));
+    walls.add(new Wall(game, 10 * 50, (12 * 2 - 2) * 50 - 30));
+    walls.add(new Wall(game, 9 * 50, (12 * 2 - 4) * 50 - 30));
+    walls.add(new Wall(game, 9 * 50, (12 * 2 - 3) * 50 - 30));
+    walls.add(new Wall(game, 9 * 50, (12 * 2 - 2) * 50 - 30));
     
     walls.add(new Wall(game, 1 * 50, 10 * 50));
     walls.add(new Wall(game, 2 * 50, 10 * 50));
@@ -67,19 +66,20 @@ public class GameScreen extends Screen {
     walls.add(new Wall(game, 7 * 50, 10 * 50));
     walls.add(new Wall(game, 8 * 50, 10 * 50));
     
-    walls.add(new Wall(game, 7 * 50, 22 * 50));
-    
     hidingSpots = new ArrayList<HidingSpot>();
-//    hidingSpots.add(new HidingSpot(game, 3 * 50, (12 * 2 - 2) * 50));
-//    hidingSpots.add(new HidingSpot(game, (8 * 2 - 2) * 50, 9 * 50));
+    hidingSpots.add(new HidingSpot(game, 3 * 50, (12 * 2 - 2) * 50));
+    hidingSpots.add(new HidingSpot(game, (8 * 2 - 2) * 50, 9 * 50));
     
     clingSpots = new ArrayList<ClingSpot>();
-//    clingSpots.add(new ClingSpot(game, 7 * 50, 1 * 50));
-//    clingSpots.add(new ClingSpot(game, 1 * 50, 9 * 50));
+    clingSpots.add(new ClingSpot(game, 7 * 50, 1 * 50));
+    clingSpots.add(new ClingSpot(game, 1 * 50, 5 * 50));
+    clingSpots.add(new ClingSpot(game, 1 * 50, 14 * 50));
     
     slideSpots = new ArrayList<SlideSpot>();
-//    slideSpots.add(new SlideSpot(game, SlideDirection.RIGHT, 8 * 50, (12 * 2 - 2) * 50));
-//    slideSpots.add(new SlideSpot(game, SlideDirection.LEFT, 11 * 50, (12 * 2 - 2) * 50));
+    slideSpots.add(new SlideSpot(game, SlideSpot.SlideDirection.RIGHT, 8 * 50, (12 * 2 - 2) * 50));
+    slideSpots.add(new SlideSpot(game, SlideSpot.SlideDirection.LEFT, 11 * 50, (12 * 2 - 2) * 50));
+    
+    slideSpots.add(new SlideSpot(game, SlideSpot.SlideDirection.RIGHT, 5 * 50, 9 * 50));
     
     // Define the collision managers
     ninjaWallCollision = new NinjaWallCollisionManager(ninja, walls);
